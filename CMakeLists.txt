@@ -18,12 +18,17 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_library(bz2 ${bzip2_STAT_SRCS})
+if(MSVC)
+    add_library(bz2 ${bzip2_STAT_SRCS})
+    install(TARGETS bz2 DESTINATION lib/)
+else()
+    add_library(bz2 SHARED ${bzip2_STAT_SRCS})
+    add_library(bz2_static ${bzip2_STAT_SRCS})
+    set_target_properties(bz2_static PROPERTIES OUTPUT_NAME "bz2")
+    install(TARGETS bz2 bz2_static DESTINATION lib/)
+endif()
 
 target_link_libraries(bz2)
-
-install(TARGETS bz2
-  DESTINATION lib/)
 
 install(FILES bzlib.h
   DESTINATION include)
